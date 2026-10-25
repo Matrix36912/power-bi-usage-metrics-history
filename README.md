@@ -4,31 +4,9 @@ Preserve Power BI report usage analytics beyond the default rolling Usage Metric
 
 ## Historical backfill flow
 
-The following illustrations are clean, privacy-safe SVG recreations based on the Power Automate screenshots. They are not AI-generated interface screenshots or copies of the original screen; tenant, site, workspace, semantic-model and list identifiers are omitted.
+See the single end-to-end illustration embedded in the [historical backfill guide](docs/historical-backfill-batches.md). The guide covers the recurrence trigger, full DAX query, Apply to each loop, SharePoint field mappings, and batch-by-batch operation.
 
-### 1. Recurrence settings
-
-![Recurrence settings illustration](docs/images/01-recurrence-settings.svg)
-
-### 2. Power BI dataset and DAX query
-
-![Power BI query illustration](docs/images/02-power-bi-query.svg)
-
-The complete DAX query from your screenshot is available as copyable text in [Historical backfill DAX query](docs/historical-backfill-dax-query.md). The example batch in that query is **10–17 February 2026**, inclusive.
-
-### 3. Apply to each
-
-![Apply to each illustration](docs/images/03-apply-to-each.svg)
-
-### 4. SharePoint Create item and field mappings
-
-![SharePoint Create item illustration](docs/images/04-sharepoint-create-item.svg)
-
-### End-to-end flow
-
-![Historical backfill flow diagram](docs/images/historical-backfill-flow.svg)
-
-[Open the flow diagram](docs/images/historical-backfill-flow.svg) · [Read the batch-by-batch guide](docs/historical-backfill-batches.md)
+The full DAX query from the provided screenshot is available as copyable text in [Historical backfill DAX query](docs/historical-backfill-dax-query.md). Its example batch is 10–17 February 2026, inclusive.
 
 ## Two-flow design
 
@@ -42,7 +20,7 @@ The repository contains sanitized JSON examples derived from the flow definition
 - [`flows/historical-backfill.json`](flows/historical-backfill.json) — sanitized historical flow example.
 - [`flows/daily-incremental-capture.json`](flows/daily-incremental-capture.json) — sanitized daily flow example.
 - [Historical DAX query](docs/historical-backfill-dax-query.md) — full copyable query and date-window notes.
-- [Historical batch procedure](docs/historical-backfill-batches.md) — how to edit the date range and run batches safely.
+- [Historical batch procedure and single flow illustration](docs/historical-backfill-batches.md) — how to edit the date range and run batches safely.
 - [SharePoint schema](docs/sharepoint-schema.md) — suggested list columns.
 - [`.gitignore`](.gitignore) — common local/secret exclusions.
 
