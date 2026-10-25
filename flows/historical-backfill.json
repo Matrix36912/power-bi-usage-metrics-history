@@ -1,0 +1,77 @@
+{
+  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "$authentication": {
+      "defaultValue": {},
+      "type": "SecureObject"
+    },
+    "$connections": {
+      "defaultValue": {},
+      "type": "Object"
+    }
+  },
+  "triggers": {
+    "Recurrence": {
+      "recurrence": {
+        "frequency": "Month",
+        "interval": "1",
+        "timeZone": "India Standard Time"
+      },
+      "type": "Recurrence"
+    }
+  },
+  "actions": {
+    "Run_a_query_against_a_dataset_1": {
+      "runAfter": {},
+      "type": "OpenApiConnection",
+      "inputs": {
+        "parameters": {
+          "groupid": "<POWER_BI_WORKSPACE_ID>",
+          "datasetid": "<POWER_BI_SEMANTIC_MODEL_ID>",
+          "specification/query": "EVALUATE\nSELECTCOLUMNS(\n FILTER(\n SUMMARIZECOLUMNS(\n 'Dates'[Date],\n 'Report pages'[SectionName],\n 'Report page views'[UserKey],\n \"TotalPageUsers\", [Total page users],\n \"TotalPageViews\", [Total page views],\n \"PageViewShare\", [Page view share]\n ),\n 'Dates'[Date] >= DATE(2026,10,11) &&\n 'Dates'[Date] <= DATE(2026,10,25)\n ),\n \"Date\", 'Dates'[Date],\n \"PageName\", 'Report pages'[SectionName],\n \"User\", 'Report page views'[UserKey],\n \"TotalPageUsers\", [TotalPageUsers],\n \"TotalPageViews\", [TotalPageViews],\n \"PageViewShare\", [PageViewShare]\n)\n",
+          "specification/serializerSettings/includeNulls": true
+        },
+        "host": {
+          "apiId": "/providers/Microsoft.PowerApps/apis/shared_powerbi",
+          "connectionName": "<POWER_BI_CONNECTION_REFERENCE>",
+          "operationId": "ExecuteDatasetQuery"
+        },
+        "authentication": "@parameters('$authentication')"
+      }
+    },
+    "Apply_to_each_1": {
+      "foreach": "@outputs('Run_a_query_against_a_dataset_1')?['body/firstTableRows']",
+      "actions": {
+        "Create_item_1": {
+          "type": "OpenApiConnection",
+          "inputs": {
+            "parameters": {
+              "dataset": "<SHAREPOINT_SITE_URL>",
+              "table": "<SHAREPOINT_LIST_ID>",
+              "item/UsageDate": "@formatDateTime(item()?['[Date]'], 'yyyy-MM-dd')",
+              "item/PageName": "@item()?['[PageName]']",
+              "item/TotalPageUsers": "@int(coalesce(item()?['[TotalPageUsers]'], 0))",
+              "item/TotalPageViews": "@int(coalesce(item()?['[TotalPageViews]'], 0))",
+              "item/PageViewShare": "@float(coalesce(item()?['[PageViewShare]'], 0))",
+              "item/CaptureDate": "@utcNow()"
+            },
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+              "connectionName": "<SHAREPOINT_CONNECTION_REFERENCE>",
+              "operationId": "PostItem"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        }
+      },
+      "runAfter": {
+        "Run_a_query_against_a_dataset_1": [
+          "Succeeded"
+        ]
+      },
+      "type": "Foreach"
+    }
+  },
+  "description": "Sanitized historical/backfill example based on supplied definition. Actual trigger and date batching must be configured and tested; this sample retains monthly recurrence and fixed dates."
+}
