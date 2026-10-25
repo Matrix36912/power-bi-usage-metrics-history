@@ -11,10 +11,11 @@ The repository contains sanitized JSON examples derived from the flow definition
 
 ## Repository structure
 
-- `flows/historical-backfill.json` — sanitized historical flow example.
-- `flows/daily-incremental-capture.json` — sanitized daily flow example.
-- `docs/sharepoint-schema.md` — suggested SharePoint list schema.
-- `.gitignore` — common local/secret exclusions.
+- [`flows/historical-backfill.json`](flows/historical-backfill.json) — sanitized historical flow example.
+- [`flows/daily-incremental-capture.json`](flows/daily-incremental-capture.json) — sanitized daily flow example.
+- [Historical batch procedure](docs/historical-backfill-batches.md) — how to edit the date range and run batches safely.
+- [SharePoint schema](docs/sharepoint-schema.md) — suggested list columns.
+- [`.gitignore`](.gitignore) — common local/secret exclusions.
 
 ## Prerequisites
 
@@ -25,10 +26,10 @@ The repository contains sanitized JSON examples derived from the flow definition
 
 ## Setup
 
-1. Create the SharePoint list using [the schema guide](docs/sharepoint-schema.md).
+1. Create the SharePoint list using the [schema guide](docs/sharepoint-schema.md).
 2. In each flow, configure Power BI and SharePoint connector connections in your own environment.
 3. Replace placeholders for workspace ID, semantic model ID, site URL, list ID, and connection references. Keep actual IDs and connection details out of this public repository if they reveal internal configuration.
-4. For historical backfill, adjust the DAX date range and process it in manageable batches. Run and validate each batch before moving to the next.
+4. For historical backfill, follow the [batch-by-batch procedure](docs/historical-backfill-batches.md). Run and validate each date range before moving to the next.
 5. For daily capture, configure the recurrence time and verify that `TODAY() - 1` matches the semantic model's date context and your intended time zone.
 6. Test on a short date range, validate row counts and metrics, and check SharePoint duplicate behavior before enabling the schedule.
 7. Review flow run history and periodically reconcile captured dates and totals against Power BI Usage Metrics.
