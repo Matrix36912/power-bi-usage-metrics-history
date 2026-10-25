@@ -2,6 +2,12 @@
 
 This document describes the first Power Automate flow shown in the project screenshots. It queries a selected date range from the Power BI Usage Metrics semantic model and writes the returned rows to the SharePoint history list.
 
+## Flow illustration
+
+![Historical backfill flow: recurrence, DAX query, Apply to each, and SharePoint Create item](historical-backfill-flow.svg)
+
+This single diagram summarizes the complete flow, including the DAX batch window and SharePoint field mappings. It is a privacy-safe recreation; tenant, workspace, semantic-model, site and list identifiers are not included.
+
 ## What the flow does
 
 1. The **Recurrence** trigger is configured with a monthly interval in the supplied definition. For a one-time backfill, run it manually/on demand where your flow setup permits, or disable the recurrence after the intended run. Do not leave an unnecessary recurring schedule enabled.
@@ -9,16 +15,18 @@ This document describes the first Power Automate flow shown in the project scree
 3. **Apply to each** iterates over the query's first table rows.
 4. **Create item** writes UsageDate, PageName, TotalPageUsers, TotalPageViews, PageViewShare, and CaptureDate to the SharePoint list.
 
-## Batch dates are edited in the DAX query
+## Full DAX query
 
-The supplied example filters dates with:
+The full query from your screenshot is maintained separately as copyable text: [Historical backfill DAX query](historical-backfill-dax-query.md).
+
+The example batch filters dates inclusively from **10 February 2026 through 17 February 2026**:
 
 ```dax
-'Dates'[Date] >= DATE(2026, 10, 11) &&
-'Dates'[Date] <= DATE(2026, 10, 25)
+'Dates'[Date] >= DATE(2026, 2, 10) &&
+'Dates'[Date] <= DATE(2026, 2, 17)
 ```
 
-Change both dates for each batch. The dates above are an example from the provided definition, not a recommendation for every run.
+Change both dates for each batch. These dates are an example from your screenshot, not a recommendation for every run.
 
 ## Suggested batch workflow
 
@@ -35,10 +43,10 @@ Change both dates for each batch. The dates above are an example from the provid
 
 | Batch | Start date | End date |
 |---|---|---|
-| 1 | 2026-10-01 | 2026-10-07 |
-| 2 | 2026-10-08 | 2026-10-14 |
-| 3 | 2026-10-15 | 2026-10-21 |
-| 4 | 2026-10-22 | 2026-10-28 |
+| 1 | 2026-02-01 | 2026-02-07 |
+| 2 | 2026-02-08 | 2026-02-14 |
+| 3 | 2026-02-15 | 2026-02-21 |
+| 4 | 2026-02-22 | 2026-02-28 |
 
 These dates illustrate the process only. Use the actual period required by your project.
 
