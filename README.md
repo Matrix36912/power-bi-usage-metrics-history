@@ -1,60 +1,48 @@
 # Power BI Usage Metrics — Historical & Daily Capture
 
-Automate the preservation of Power BI report usage analytics by querying the Usage Metrics semantic model and writing results to a SharePoint list.
+Preserve Power BI report usage analytics beyond the default rolling Usage Metrics window using Power Automate and SharePoint.
 
-Power BI Usage Metrics provides a rolling view of activity. This project documents a pattern for retaining a longer history by using two Power Automate cloud flows:
+## Two-flow design
 
-1. **Historical backfill (run once):** capture a defined historical date range in manageable batches.
-2. **Daily incremental capture (scheduled):** capture the previous day's usage data regularly so new records are retained beyond the rolling window.
+1. **Historical backfill** — run controlled date-range batches to seed the SharePoint list with older usage data.
+2. **Daily incremental capture** — scheduled daily; queries the previous day and checks whether a page/date row already exists before inserting it.
 
-> **Important:** The repository currently includes a sanitized example based on one supplied flow definition. That definition uses a monthly recurrence and fixed dates; it is not a verified implementation of the daily flow or a complete historical backfill. Update and test the flow configuration in your own environment before using it.
+The repository contains sanitized JSON examples derived from the flow definitions shared by the project author. They are reference examples, not drop-in deployment packages. They do not contain connection credentials and replace tenant-specific identifiers with placeholders.
 
 ## Repository structure
 
-- `flows/example-monthly-capture.json` — sanitized example of the supplied flow definition.
-- `docs/sharepoint-schema.md` — suggested SharePoint list columns.
-- `.gitignore` — excludes common local and secret-bearing files.
-
-## How it works
-
-1. Power Automate runs a DAX query against the Power BI Usage Metrics semantic model.
-2. The query groups usage data by date and report page, with metrics such as page users, page views, and page-view share.
-3. An `Apply to each` loop writes each result to a SharePoint list.
-4. The historical flow should process the chosen date range in batches.
-5. The incremental flow should run daily and query a completed date (typically yesterday) to avoid querying an incomplete current day.
+- `flows/historical-backfill.json` — sanitized historical flow example.
+- `flows/daily-incremental-capture.json` — sanitized daily flow example.
+- `docs/sharepoint-schema.md` — suggested SharePoint list schema.
+- `.gitignore` — common local/secret exclusions.
 
 ## Prerequisites
 
-- Permission to query the relevant Power BI Usage Metrics semantic model.
-- A Power Automate cloud flow with the Power BI connector.
-- A SharePoint site and list where you have permission to create items.
-- Approved organizational permissions and connector connections.
+- Power Automate cloud flow authoring access.
+- Power BI connector permission to query the Usage Metrics semantic model.
+- SharePoint access to create and read list items.
+- A SharePoint list with columns matching the mappings in the examples.
 
-## Setup overview
+## Setup
 
-1. Create or identify a SharePoint list using the suggested schema in [docs/sharepoint-schema.md](docs/sharepoint-schema.md).
-2. Create a Power Automate flow and add **Run a query against a dataset**.
-3. Replace all placeholder workspace, semantic-model, SharePoint site, and list values with your own configuration. Do not commit tenant-specific identifiers or connection exports to a public repository.
-4. Use a DAX date filter for the range to capture. For a backfill, process a bounded interval per run or batch to avoid query and connector limits.
-5. Add an **Apply to each** over the query's returned rows and create SharePoint items, mapping the query columns to list columns.
-6. For the historical backfill, run once for each batch and verify counts before proceeding.
-7. For daily capture, configure a daily recurrence and a dynamic date window (usually yesterday). The supplied example is monthly with hard-coded dates and must not be used as-is for this purpose.
-8. Test with a small date range, check for duplicate rows, validate totals against Usage Metrics, and only then enable the production schedule.
+1. Create the SharePoint list using [the schema guide](docs/sharepoint-schema.md).
+2. In each flow, configure Power BI and SharePoint connector connections in your own environment.
+3. Replace placeholders for workspace ID, semantic model ID, site URL, list ID, and connection references. Keep actual IDs and connection details out of this public repository if they reveal internal configuration.
+4. For historical backfill, adjust the DAX date range and process it in manageable batches. Run and validate each batch before moving to the next.
+5. For daily capture, configure the recurrence time and verify that `TODAY() - 1` matches the semantic model's date context and your intended time zone.
+6. Test on a short date range, validate row counts and metrics, and check SharePoint duplicate behavior before enabling the schedule.
+7. Review flow run history and periodically reconcile captured dates and totals against Power BI Usage Metrics.
 
-## Important design considerations
+## Important caveats
 
-- **Idempotency:** the sample pattern creates items. Re-running a date range can create duplicates unless you implement a unique key and check/update existing records.
-- **Retention and completeness:** compare captured dates and row counts regularly. Usage Metrics definitions and available fields can change.
-- **Privacy:** user-level identifiers can be sensitive. Store them only if necessary and authorized; keep public examples anonymized.
-- **Permissions:** use least-privilege connector access and follow your organization's data-handling policies.
-- **Limits:** Power BI query, Power Automate, and SharePoint thresholds can affect batch sizes and run duration.
-- **Schema:** connector output column names may include bracketed names such as `[Date]`; verify the actual response before mapping expressions.
-- **No secrets in source:** use managed connections and environment configuration. Never commit credentials, access tokens, or exported connection details.
-
-## Status
-
-Documentation starter and sanitized sample. The daily incremental flow and a complete historical backfill definition still need to be added and validated.
+- The supplied historical definition has a monthly trigger and a fixed date range. It is not automatically a full backfill until you configure the date windows and run all required batches.
+- The daily flow checks for an existing record by page name and usage date. If your model has multiple rows per page/date, the uniqueness key must include the additional dimensions. Consider using a stable key and a SharePoint unique column for stronger idempotency.
+- The daily flow uses UTC scheduling but DAX `TODAY()` follows the semantic model's evaluation context. Validate the date boundary carefully.
+- SharePoint OData filters can require date-format adjustments and escaping for page names containing apostrophes. Test these cases.
+- User-level identifiers can be sensitive. The historical query includes a user key, but its supplied SharePoint create action does not store it. Keep that field out unless required and authorized.
+- Flow JSON copied from a code view may not be a complete importable Power Automate package; connector bindings must be set up separately.
+- Power BI, Power Automate, and SharePoint service limits can affect batch size and run time.
 
 ## License
 
-No license has been added yet. Add a license only after deciding how you want others to reuse the material.
+Check the repository's existing license before reusing or redistributing the project.
