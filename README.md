@@ -4,11 +4,29 @@ Preserve Power BI report usage analytics beyond the default rolling Usage Metric
 
 ## Historical backfill flow
 
-The illustration below is an animated, simplified explanation based on the supplied Power Automate screenshots. It shows the recurrence trigger, DAX query, row loop, and SharePoint create-item action. The date window is an example; edit the DAX start and end dates for each batch.
+The following illustrations are privacy-safe recreations of all four screenshots supplied for the first flow. They are explanatory mockups, not original screenshots; tenant, site and list identifiers are omitted.
+
+### 1. Recurrence settings
+
+![Recurrence settings illustration](docs/images/01-recurrence-settings.svg)
+
+### 2. Power BI dataset and DAX query
+
+![Power BI query illustration](docs/images/02-power-bi-query.svg)
+
+### 3. Apply to each
+
+![Apply to each illustration](docs/images/03-apply-to-each.svg)
+
+### 4. SharePoint Create item and field mappings
+
+![SharePoint Create item illustration](docs/images/04-sharepoint-create-item.svg)
+
+### Animated end-to-end flow
 
 ![Animated historical backfill flow](docs/images/historical-backfill-flow.svg)
 
-[Open the full-size animated flow illustration](docs/images/historical-backfill-flow.svg) · [Read the batch-by-batch guide](docs/historical-backfill-batches.md)
+[Open the animated flow illustration](docs/images/historical-backfill-flow.svg) · [Read the batch-by-batch guide](docs/historical-backfill-batches.md)
 
 ## Two-flow design
 
