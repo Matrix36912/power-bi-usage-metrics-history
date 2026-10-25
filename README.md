@@ -2,6 +2,14 @@
 
 Preserve Power BI report usage analytics beyond the default rolling Usage Metrics window using Power Automate and SharePoint.
 
+## Historical backfill flow
+
+The illustration below is an animated, simplified explanation based on the supplied Power Automate screenshots. It shows the recurrence trigger, DAX query, row loop, and SharePoint create-item action. The date window is an example; edit the DAX start and end dates for each batch.
+
+![Animated historical backfill flow](docs/images/historical-backfill-flow.svg)
+
+[Open the full-size animated flow illustration](docs/images/historical-backfill-flow.svg) · [Read the batch-by-batch guide](docs/historical-backfill-batches.md)
+
 ## Two-flow design
 
 1. **Historical backfill** — run controlled date-range batches to seed the SharePoint list with older usage data.
