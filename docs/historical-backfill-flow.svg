@@ -1,44 +1,339 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1120" viewBox="0 0 1200 1120" role="img" aria-labelledby="title desc">
-<title id="title">Power BI Usage Metrics historical backfill flow</title><desc id="desc">Technical flow diagram based on the provided Power Automate screenshots. The DAX date filter uses the user's example dates February 10 through February 17, 2026. Tenant-specific details are omitted.</desc>
-<defs><linearGradient id="bg" x2="0" y2="1"><stop stop-color="#f7faff"/><stop offset="1" stop-color="#edf3f9"/></linearGradient><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="#657b94"/></marker><style>.h{font-family:Segoe UI,Arial,sans-serif;fill:#17365d}.body{font-family:Segoe UI,Arial,sans-serif;fill:#304c6b}.mono{font-family:Consolas,monospace;fill:#203c5c;font-size:15px}.label{font-family:Segoe UI,Arial,sans-serif;fill:#fff;font-weight:700;font-size:20px}</style></defs>
-<rect width="1200" height="1120" fill="url(#bg)"/>
-<text x="40" y="54" class="h" font-size="32" font-weight="700">Power BI Usage Metrics — Historical Backfill</text>
-<text x="40" y="84" class="body" font-size="18">Power Automate → Power BI Usage Metrics → SharePoint · Process one date batch at a time</text>
-<rect x="40" y="108" width="1120" height="100" rx="12" fill="#fff" stroke="#c7d7e8"/>
-<circle cx="78" cy="157" r="23" fill="#1677c8"/><text x="78" y="164" text-anchor="middle" class="label">1</text>
-<text x="116" y="145" class="h" font-size="22" font-weight="700">Recurrence trigger</text><text x="116" y="174" class="body" font-size="16">Monthly interval shown in the supplied flow. Manage batches intentionally; the trigger does not automatically iterate date ranges.</text>
-<rect x="825" y="128" width="300" height="58" rx="8" fill="#edf5ff" stroke="#c2dcf7"/><text x="845" y="151" class="body" font-size="15">Frequency: Month</text><text x="845" y="173" class="body" font-size="15">Interval: 1 · Time zone: UTC+05:30</text>
-<path d="M600 208 V229" stroke="#657b94" stroke-width="3" marker-end="url(#arrow)"/>
-<rect x="40" y="238" width="1120" height="600" rx="12" fill="#fff" stroke="#c7d7e8"/>
-<circle cx="78" cy="276" r="23" fill="#d9a000"/><text x="78" y="283" text-anchor="middle" class="label">2</text>
-<text x="116" y="283" class="h" font-size="22" font-weight="700">Run a query against a dataset</text>
-<text x="116" y="310" class="body" font-size="16">Dataset: Usage Metrics Report · Query includes Date, PageName, User, TotalPageUsers, TotalPageViews and PageViewShare.</text>
-<rect x="70" y="332" width="1060" height="408" rx="8" fill="#fbfdff" stroke="#b9cce0"/>
-<rect x="70" y="332" width="1060" height="40" rx="8" fill="#eaf2fb"/><text x="90" y="358" class="h" font-size="16" font-weight="700">DAX QUERY · EXAMPLE BATCH: 10–17 FEB 2026 (INCLUSIVE)</text>
-<g class="mono">
-<text x="92" y="400">EVALUATE</text>
-<text x="92" y="423">SELECTCOLUMNS(</text>
-<text x="112" y="446">FILTER(</text>
-<text x="132" y="469">SUMMARIZECOLUMNS(</text>
-<text x="152" y="492">'Dates'[Date],</text>
-<text x="152" y="515">'Report pages'[SectionName],</text>
-<text x="152" y="538">'Report page views'[UserKey],</text>
-<text x="152" y="561">"TotalPageUsers", [Total page users],</text>
-<text x="152" y="584">"TotalPageViews", [Total page views],</text>
-<text x="152" y="607">"PageViewShare", [Page view share]</text>
-<text x="132" y="630">),</text>
-<text x="112" y="653">'Dates'[Date] &gt;= DATE(2026, 2, 10) &amp;&amp;</text>
-<text x="112" y="676">'Dates'[Date] &lt;= DATE(2026, 2, 17)</text>
-<text x="92" y="699">),</text>
-<text x="92" y="722">... then SELECTCOLUMNS maps Date, PageName, User, TotalPageUsers, TotalPageViews, PageViewShare</text>
-</g>
-<rect x="70" y="755" width="1060" height="58" rx="8" fill="#fff4d6" stroke="#e8c76b"/><text x="90" y="779" class="body" font-size="15" font-weight="700">For the next batch:</text><text x="90" y="800" class="body" font-size="15">Change both DATE values; use consecutive, non-overlapping windows and validate each run before continuing.</text>
-<path d="M600 838 V859" stroke="#657b94" stroke-width="3" marker-end="url(#arrow)"/>
-<rect x="40" y="868" width="540" height="112" rx="12" fill="#fff" stroke="#c7d7e8"/>
-<circle cx="78" cy="906" r="23" fill="#6b61c9"/><text x="78" y="913" text-anchor="middle" class="label">3</text><text x="116" y="907" class="h" font-size="21" font-weight="700">Apply to each</text><text x="116" y="935" class="body" font-size="16">Input: first table rows returned by the query.</text><text x="116" y="958" class="body" font-size="15">Process each result row separately.</text>
-<rect x="600" y="868" width="560" height="112" rx="12" fill="#fff" stroke="#c7d7e8"/>
-<circle cx="638" cy="906" r="23" fill="#159b78"/><text x="638" y="913" text-anchor="middle" class="label">4</text><text x="676" y="907" class="h" font-size="21" font-weight="700">Create item in SharePoint</text><text x="676" y="935" class="body" font-size="15">UsageDate ← Date · PageName ← PageName</text><text x="676" y="958" class="body" font-size="15">Metrics ← query values · CaptureDate ← utcNow()</text>
-<rect x="40" y="1000" width="1120" height="82" rx="12" fill="#e8f4ed" stroke="#b7d8c2"/>
-<text x="62" y="1028" class="h" font-size="18" font-weight="700">Batch checklist</text><text x="62" y="1055" class="body" font-size="16">Edit dates → Save → Run → Check run history → Validate SharePoint rows → Record range → Repeat.</text>
-<text x="40" y="1105" class="body" font-size="13">Sanitized technical illustration based on supplied screenshots. Tenant URL and workspace, dataset, and list IDs are omitted.</text>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="1640" height="1050" viewBox="0 0 1640 1050">
+  <title>Power BI Usage Metrics — Historical Backfill Flow</title>
+  <desc>Four-step workflow: recurrence trigger, Power BI DAX query, Apply to each, and SharePoint Create item, with batch instructions and a checklist.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f5f9ff"/>
+    </linearGradient>
+    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#1687f8"/>
+      <stop offset="100%" stop-color="#0863cf"/>
+    </linearGradient>
+    <linearGradient id="teal" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#13b9c2"/>
+      <stop offset="100%" stop-color="#008b9b"/>
+    </linearGradient>
+    <linearGradient id="purple" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#8572ff"/>
+      <stop offset="100%" stop-color="#6750e8"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#fff4d9"/>
+      <stop offset="100%" stop-color="#ffedb5"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#1687e8"/>
+    </marker>
+    <style>
+      text { font-family: "Segoe UI", Arial, sans-serif; }
+      .heading { fill:#102f60; font-weight:700; }
+      .body { fill:#3e587b; }
+      .small { fill:#304a6b; font-size:16px; }
+      .step-title { fill:#15376c; font-size:23px; font-weight:700; }
+      .step-desc { fill:#4b6384; font-size:17px; }
+      .mono { font-family:Consolas, "Courier New", monospace; font-size:14px; fill:#273a53; }
+      .code-blue { fill:#0068ed; }
+      .panel { fill:#fff; stroke:#9bcfff; stroke-width:1.5; }
+      .soft { fill:#eef6ff; }
+      .line { stroke:#1687e8; stroke-width:3; fill:none; }
+      .table-label { fill:#e0efff; stroke:#d2e4f7; }
+      .table-value { fill:#fff; stroke:#d7e1ee; }
+    </style>
+  </defs>
+
+  <rect width="1640" height="1050" fill="url(#bg)"/>
+
+  <!-- Header -->
+  <text x="48" y="57" class="heading" font-size="38">
+    Power BI Usage Metrics — Historical Backfill Flow
+  </text>
+  <text x="50" y="91" class="body" font-size="23">
+    Run one date range per batch; validate before moving to the next.
+  </text>
+
+  <!-- Purpose card -->
+  <rect x="1215" y="12" width="385" height="95" rx="13"
+        fill="#eaf4ff" stroke="#9bcfff"/>
+  <g transform="translate(1235 35)" fill="#1687e8">
+    <rect x="0" y="26" width="12" height="23" rx="2"/>
+    <rect x="17" y="13" width="12" height="36" rx="2"/>
+    <rect x="34" y="0" width="12" height="49" rx="2"/>
+  </g>
+  <text x="1300" y="35" class="heading" font-size="18">Purpose</text>
+  <text x="1300" y="57" class="body" font-size="15">
+    <tspan x="1300" dy="0">Capture historical report usage in</tspan>
+    <tspan x="1300" dy="19">batches and store results in SharePoint</tspan>
+    <tspan x="1300" dy="19">beyond the default rolling retention window.</tspan>
+  </text>
+
+  <!-- STEP 1 -->
+  <rect x="48" y="125" width="1544" height="102" rx="14" class="panel"/>
+  <circle cx="49" cy="164" r="25" fill="url(#blue)"/>
+  <text x="49" y="173" fill="#fff" font-size="25" font-weight="700" text-anchor="middle">1</text>
+
+  <rect x="101" y="139" width="78" height="75" rx="12" fill="url(#blue)"/>
+  <g transform="translate(118 153)" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round">
+    <circle cx="22" cy="22" r="17"/>
+    <path d="M22 11 V22 L31 28"/>
+    <path d="M12 0 Q22 -6 32 0"/>
+    <path d="M4 4 L0 9 M40 4 L44 9"/>
+  </g>
+
+  <text x="202" y="158" class="step-title">Recurrence / Run trigger</text>
+  <text x="202" y="184" class="step-desc">
+    <tspan x="202">Monthly trigger shown in the current flow;</tspan>
+    <tspan x="202" dy="21">run intentionally for each historical batch.</tspan>
+  </text>
+
+  <rect x="600" y="137" width="965" height="77" rx="12" class="soft"/>
+  <g transform="translate(630 157)" fill="none" stroke="#1687e8" stroke-width="3">
+    <rect x="0" y="3" width="29" height="26" rx="3"/>
+    <path d="M0 10 H29 M7 -2 V7 M22 -2 V7"/>
+    <path d="M8 18 L13 23 L22 15"/>
+  </g>
+  <text x="672" y="161" class="body" font-size="16">Frequency</text>
+  <text x="672" y="187" class="heading" font-size="19">Month</text>
+
+  <path d="M842 150 V200" stroke="#cfdeee"/>
+  <g transform="translate(875 159)" fill="none" stroke="#1687e8" stroke-width="3">
+    <path d="M26 5 A15 15 0 1 0 28 23"/>
+    <path d="M26 0 V9 H17"/>
+  </g>
+  <text x="918" y="161" class="body" font-size="16">Interval</text>
+  <text x="918" y="187" class="heading" font-size="19">1</text>
+
+  <path d="M1065 150 V200" stroke="#cfdeee"/>
+  <g transform="translate(1090 158)" fill="none" stroke="#1687e8" stroke-width="3">
+    <circle cx="18" cy="18" r="17"/>
+    <ellipse cx="18" cy="18" rx="8" ry="17"/>
+    <path d="M2 12 H34 M2 24 H34"/>
+  </g>
+  <text x="1135" y="161" class="body" font-size="16">Time zone</text>
+  <text x="1135" y="183" class="heading" font-size="17">
+    <tspan x="1135">(UTC+05:30) Chennai,</tspan>
+    <tspan x="1135" dy="20">Kolkata, Mumbai, New Delhi</tspan>
+  </text>
+
+  <path d="M350 228 V249" class="line" marker-end="url(#arrow)"/>
+
+  <!-- STEP 2 main panel -->
+  <rect x="48" y="256" width="1544" height="345" rx="14" class="panel"/>
+  <circle cx="49" cy="298" r="25" fill="url(#teal)"/>
+  <text x="49" y="307" fill="#fff" font-size="25" font-weight="700" text-anchor="middle">2</text>
+
+  <!-- Power BI icon -->
+  <rect x="101" y="272" width="78" height="78" rx="13" fill="#fff4d9" stroke="#ffebbb"/>
+  <g transform="translate(119 291)" fill="#eab000">
+    <rect x="0" y="26" width="14" height="28" rx="2"/>
+    <rect x="15" y="12" width="14" height="42" rx="2"/>
+    <rect x="30" y="0" width="14" height="54" rx="2"/>
+  </g>
+
+  <text x="202" y="294" class="step-title">Run a query against a dataset</text>
+  <text x="202" y="323" class="step-desc">
+    <tspan x="202">Select the Power BI workspace and</tspan>
+    <tspan x="202" dy="22">dataset (e.g. Usage Metrics Report)</tspan>
+    <tspan x="202" dy="22">and use the DAX query shown here.</tspan>
+  </text>
+
+  <!-- DAX panel -->
+  <text x="598" y="275" class="heading" font-size="17">DAX query — core logic</text>
+  <rect x="592" y="284" width="495" height="290" rx="7" fill="#fff" stroke="#cbd9e8"/>
+
+  <g class="mono">
+    <text x="609" y="305" class="code-blue">EVALUATE</text>
+    <text x="609" y="321" class="code-blue">SELECTCOLUMNS(</text>
+    <text x="628" y="337" class="code-blue">FILTER(</text>
+    <text x="647" y="353" class="code-blue">SUMMARIZECOLUMNS(</text>
+    <text x="666" y="369">'Dates'[Date],</text>
+    <text x="666" y="385">'Report pages'[SectionName],</text>
+    <text x="666" y="401">'Report page views'[UserKey],</text>
+    <text x="666" y="417">"TotalPageUsers", [Total page users],</text>
+    <text x="666" y="433">"TotalPageViews", [Total page views],</text>
+    <text x="666" y="449">"PageViewShare", [Page view share]</text>
+    <text x="647" y="465">),</text>
+    <text x="647" y="481">'Dates'[Date] &gt;= DATE(2026, 2, 10) &amp;&amp;</text>
+    <text x="647" y="497">'Dates'[Date] &lt;= DATE(2026, 2, 17)</text>
+    <text x="628" y="513">),</text>
+    <text x="628" y="529">"Date", 'Dates'[Date],</text>
+    <text x="628" y="545">"PageName", 'Report pages'[SectionName],</text>
+    <text x="628" y="561">"User", 'Report page views'[UserKey]</text>
+  </g>
+
+  <!-- Guidance -->
+  <rect x="1104" y="270" width="464" height="108" rx="12" fill="url(#gold)" stroke="#ffc64d"/>
+  <circle cx="1138" cy="302" r="16" fill="#f7b500"/>
+  <path d="M1138 291 V307 M1131 300 L1138 307 L1145 300"
+        stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <text x="1166" y="293" fill="#bd460d" font-size="17" font-weight="700">
+    <tspan x="1166">For each batch, add a FILTER</tspan>
+    <tspan x="1166" dy="21">around SUMMARIZECOLUMNS.</tspan>
+    <tspan x="1166" dy="21">Change both start and end dates</tspan>
+    <tspan x="1166" dy="21">for the next date range.</tspan>
+  </text>
+
+  <rect x="1104" y="389" width="464" height="111" rx="12" class="soft"/>
+  <text x="1122" y="414" class="heading" font-size="17">Example date filter</text>
+  <rect x="1122" y="424" width="428" height="52" rx="5" fill="#fff" stroke="#d2dfed"/>
+  <g class="mono">
+    <text x="1136" y="445">'Dates'[Date] &gt;= DATE(2026, 2, 10) &amp;&amp;</text>
+    <text x="1136" y="464">'Dates'[Date] &lt;= DATE(2026, 2, 17)</text>
+  </g>
+  <text x="1122" y="522" class="body" font-size="16">
+    <tspan x="1122">Example dates only. Change the date range</tspan>
+    <tspan x="1122" dy="20">for each batch; avoid overlaps and gaps.</tspan>
+  </text>
+
+  <text x="609" y="591" class="body" font-size="14">
+    Output aliases: Date, PageName, User, TotalPageUsers, TotalPageViews, PageViewShare.
+  </text>
+
+  <path d="M350 602 V622" class="line" marker-end="url(#arrow)"/>
+
+  <!-- STEP 3 -->
+  <rect x="48" y="629" width="1544" height="101" rx="14" class="panel"/>
+  <circle cx="49" cy="668" r="25" fill="url(#blue)"/>
+  <text x="49" y="677" fill="#fff" font-size="25" font-weight="700" text-anchor="middle">3</text>
+
+  <rect x="101" y="642" width="78" height="75" rx="12" fill="url(#purple)"/>
+  <g transform="translate(123 660)" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round">
+    <rect x="0" y="5" width="34" height="32" rx="7"/>
+    <path d="M17 -2 V11 M17 31 V44 M-7 21 H6 M28 21 H41"/>
+  </g>
+
+  <text x="202" y="667" class="step-title">Apply to each</text>
+  <text x="202" y="694" class="step-desc">
+    <tspan x="202">Iterate through each row returned</tspan>
+    <tspan x="202" dy="21">by the query.</tspan>
+  </text>
+
+  <rect x="600" y="641" width="965" height="77" rx="12" class="soft"/>
+  <g transform="translate(638 654)" fill="none" stroke="#1687e8" stroke-width="3">
+    <ellipse cx="17" cy="7" rx="16" ry="6"/>
+    <path d="M1 7 V37 C1 45 33 45 33 37 V7"/>
+    <path d="M1 17 C1 25 33 25 33 17 M1 27 C1 35 33 35 33 27"/>
+  </g>
+  <text x="686" y="665" class="heading" font-size="17">Input</text>
+  <text x="686" y="690" class="body" font-size="17">First table rows returned by the query (e.g. firstTableRows).</text>
+
+  <path d="M350 731 V749" class="line" marker-end="url(#arrow)"/>
+
+  <!-- STEP 4 -->
+  <rect x="48" y="756" width="1544" height="116" rx="14" class="panel"/>
+  <circle cx="49" cy="798" r="25" fill="url(#teal)"/>
+  <text x="49" y="807" fill="#fff" font-size="25" font-weight="700" text-anchor="middle">4</text>
+
+  <rect x="101" y="774" width="78" height="78" rx="12" fill="#b8f3e7"/>
+  <g transform="translate(113 789)">
+    <circle cx="41" cy="20" r="19" fill="#008b85" opacity=".9"/>
+    <circle cx="27" cy="30" r="19" fill="#0e9c91" opacity=".9"/>
+    <rect x="0" y="0" width="35" height="42" rx="4" fill="#0a8f87"/>
+    <text x="17" y="29" fill="#fff" font-size="24" font-weight="700" text-anchor="middle">S</text>
+  </g>
+
+  <text x="202" y="797" class="step-title">Create item in SharePoint</text>
+  <text x="202" y="824" class="step-desc">
+    <tspan x="202">Create a new item in the usage metrics</tspan>
+    <tspan x="202" dy="21">SharePoint list for each query row.</tspan>
+  </text>
+
+  <text x="602" y="783" class="heading" font-size="17">Field mapping — query result to SharePoint columns</text>
+
+  <!-- Left mapping table -->
+  <g font-size="15">
+    <rect x="602" y="794" width="160" height="24" rx="3" class="table-label"/>
+    <rect x="762" y="794" width="300" height="24" rx="3" class="table-value"/>
+    <text x="618" y="811" class="heading">UsageDate</text>
+    <text x="790" y="811" class="small">Date</text>
+
+    <rect x="602" y="820" width="160" height="24" rx="3" class="table-label"/>
+    <rect x="762" y="820" width="300" height="24" rx="3" class="table-value"/>
+    <text x="618" y="837" class="heading">PageName</text>
+    <text x="790" y="837" class="small">PageName</text>
+
+    <rect x="602" y="846" width="160" height="20" rx="3" class="table-label"/>
+    <rect x="762" y="846" width="300" height="20" rx="3" class="table-value"/>
+    <text x="618" y="861" class="heading">TotalPageUsers</text>
+    <text x="790" y="861" class="small">TotalPageUsers</text>
+
+    <rect x="1073" y="794" width="170" height="24" rx="3" class="table-label"/>
+    <rect x="1243" y="794" width="320" height="24" rx="3" class="table-value"/>
+    <text x="1088" y="811" class="heading">TotalPageViews</text>
+    <text x="1260" y="811" class="small">TotalPageViews</text>
+
+    <rect x="1073" y="820" width="170" height="24" rx="3" class="table-label"/>
+    <rect x="1243" y="820" width="320" height="24" rx="3" class="table-value"/>
+    <text x="1088" y="837" class="heading">PageViewShare</text>
+    <text x="1260" y="837" class="small">PageViewShare</text>
+
+    <rect x="1073" y="846" width="170" height="20" rx="3" class="table-label"/>
+    <rect x="1243" y="846" width="320" height="20" rx="3" class="table-value"/>
+    <text x="1088" y="861" class="heading">CaptureDate</text>
+    <text x="1260" y="861" class="small">utcNow()</text>
+  </g>
+
+  <!-- Bottom checklist -->
+  <rect x="24" y="890" width="1592" height="103" rx="13" fill="#fff" stroke="#9bcfff" stroke-width="1.5"/>
+  <rect x="24" y="890" width="210" height="103" rx="12" fill="url(#blue)"/>
+  <g transform="translate(47 918)" fill="none" stroke="#fff" stroke-width="3">
+    <rect x="0" y="0" width="27" height="34" rx="3"/>
+    <path d="M6 10 L11 15 L20 6 M6 23 H21 M6 29 H21"/>
+  </g>
+  <text x="86" y="930" fill="#fff" font-size="18" font-weight="700">Batch checklist</text>
+  <text x="86" y="954" fill="#fff" font-size="14">Repeat until complete</text>
+
+  <g>
+    <circle cx="270" cy="928" r="17" fill="#d7eaff"/>
+    <text x="270" y="934" text-anchor="middle" class="heading" font-size="17">1</text>
+    <text x="296" y="923" class="small">
+      <tspan x="296">Edit dates</tspan><tspan x="296" dy="19">for the batch</tspan>
+    </text>
+
+    <path d="M389 920 L400 928 L389 936" stroke="#8fc1f4" stroke-width="2" fill="none"/>
+
+    <circle cx="430" cy="928" r="17" fill="#d7eaff"/>
+    <text x="430" y="934" text-anchor="middle" class="heading" font-size="17">2</text>
+    <text x="456" y="934" class="small">Run flow</text>
+
+    <path d="M529 920 L540 928 L529 936" stroke="#8fc1f4" stroke-width="2" fill="none"/>
+
+    <circle cx="570" cy="928" r="17" fill="#d7eaff"/>
+    <text x="570" y="934" text-anchor="middle" class="heading" font-size="17">3</text>
+    <text x="596" y="923" class="small">
+      <tspan x="596">Check run</tspan><tspan x="596" dy="19">history</tspan>
+    </text>
+
+    <path d="M695 920 L706 928 L695 936" stroke="#8fc1f4" stroke-width="2" fill="none"/>
+
+    <circle cx="737" cy="928" r="17" fill="#d7eaff"/>
+    <text x="737" y="934" text-anchor="middle" class="heading" font-size="17">4</text>
+    <text x="763" y="923" class="small">
+      <tspan x="763">Validate SharePoint</tspan><tspan x="763" dy="19">rows are created</tspan>
+    </text>
+
+    <path d="M906 920 L917 928 L906 936" stroke="#8fc1f4" stroke-width="2" fill="none"/>
+
+    <circle cx="948" cy="928" r="17" fill="#d7eaff"/>
+    <text x="948" y="934" text-anchor="middle" class="heading" font-size="17">5</text>
+    <text x="974" y="923" class="small">
+      <tspan x="974">Record completed</tspan><tspan x="974" dy="19">date range</tspan>
+    </text>
+
+    <path d="M1110 920 L1121 928 L1110 936" stroke="#8fc1f4" stroke-width="2" fill="none"/>
+
+    <circle cx="1152" cy="928" r="17" fill="#d7eaff"/>
+    <text x="1152" y="934" text-anchor="middle" class="heading" font-size="17">6</text>
+    <text x="1178" y="923" class="small">
+      <tspan x="1178">Repeat with the next</tspan><tspan x="1178" dy="19">non-overlapping range</tspan>
+    </text>
+  </g>
+
+  <!-- Warning -->
+  <rect x="1255" y="1001" width="361" height="39" rx="9" fill="#fff0f0" stroke="#ffb8be"/>
+  <path d="M1275 1031 L1290 1007 L1305 1031 Z" fill="#d9273e"/>
+  <text x="1290" y="1027" text-anchor="middle" fill="#fff" font-size="17" font-weight="700">!</text>
+  <text x="1315" y="1018" fill="#b51e32" font-size="14" font-weight="700">Important</text>
+  <text x="1315" y="1034" fill="#b51e32" font-size="12">Rerunning a batch may create duplicate records.</text>
 </svg>
