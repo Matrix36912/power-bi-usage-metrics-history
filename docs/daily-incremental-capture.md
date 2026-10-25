@@ -1,12 +1,10 @@
 # Daily incremental capture flow
 
-This guide documents the second Power Automate cloud flow from the supplied screenshots. It captures the previous day's Power BI Usage Metrics and creates a SharePoint list item only when a matching page/date item is not found.
+ This captures the previous day's Power BI Usage Metrics and creates a SharePoint list item only when a matching page/date item is not found.
 
 ## Flow illustration
 
 ![Power BI Usage Metrics — Daily Incremental Capture Flow](daily-incremental-capture-flow.svg)
-
-The illustration is a clean, privacy-safe SVG recreation based on the screenshots. Tenant-specific SharePoint URLs, workspace and semantic-model IDs, list GUIDs, and account email addresses are intentionally excluded.
 
 ## How the flow works
 
@@ -106,8 +104,3 @@ The screenshots show these fields being populated in the Create item action. Con
 10. Run again for the same date and page and confirm the second run skips creation.
 11. Check flow run history and reconcile the daily metrics against the Power BI Usage Metrics model.
 
-## Privacy and deployment notes
-
-- Do not publish real tenant URLs, workspace IDs, semantic-model IDs, SharePoint list IDs, connection details, access tokens, or personal usage data.
-- The JSON in this repository is a sanitized reference example, not a ready-to-import Power Automate solution package. Configure connector references and environment-specific values after importing or rebuilding the flow.
-- This flow is intended to append missing daily rows; it does not update an existing row if metrics change after the first capture.
