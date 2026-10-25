@@ -1,6 +1,6 @@
 # Historical backfill: batch-by-batch procedure
 
-This document describes the first Power Automate flow shown in the project screenshots. It queries a selected date range from the Power BI Usage Metrics semantic model and writes the returned rows to the SharePoint history list.
+This document describes the first Power Automate flow that should be run in batches because there is 5000 row limit and only once to capture historical data. It queries a selected date range from the Power BI Usage Metrics semantic model and writes the returned rows to the SharePoint history list.
 
 ## Flow illustration
 
