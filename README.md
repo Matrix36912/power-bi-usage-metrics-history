@@ -50,6 +50,7 @@ The repository contains sanitized JSON examples derived from the flow definition
 5. Follow the [daily flow guide](docs/daily-incremental-capture.md), including the duplicate check and True/False condition branches.
 6. Test a short historical range and a daily run. Validate row counts, date boundaries, field mappings, and duplicate behavior before enabling schedules.
 7. Review flow run history and periodically reconcile captured dates and totals against Power BI Usage Metrics.
+8. can connect SharePoint list to visualize usage metrics of any captured period.
 
 ## Important caveats
 
@@ -61,6 +62,3 @@ The repository contains sanitized JSON examples derived from the flow definition
 - Flow JSON is a sanitized reference example, not necessarily a complete import-ready Power Automate package; configure connector bindings separately.
 - Power BI, Power Automate, and SharePoint limits can affect batch size and runtime.
 
-## License
-
-Check the repository's existing license before reusing or redistributing the project.
