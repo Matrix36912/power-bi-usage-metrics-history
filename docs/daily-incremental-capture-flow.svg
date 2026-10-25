@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1180" viewBox="0 0 1600 1180" role="img" aria-labelledby="title desc">
+<title id="title">Power BI Usage Metrics — Daily Incremental Capture Flow</title>
+<desc id="desc">Daily Power Automate flow: recurrence, query yesterday's metrics, loop through rows, check SharePoint for a matching page and date, and create an item only when no match exists. Environment-specific identifiers are omitted.</desc>
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#f3f8ff"/></linearGradient>
+ <linearGradient id="blue" x2="1" y2="1"><stop stop-color="#1687f8"/><stop offset="1" stop-color="#075dc5"/></linearGradient>
+ <linearGradient id="teal" x2="1" y2="1"><stop stop-color="#17b9c2"/><stop offset="1" stop-color="#008795"/></linearGradient>
+ <linearGradient id="purple" x2="1" y2="1"><stop stop-color="#8673ff"/><stop offset="1" stop-color="#6549e8"/></linearGradient>
+ <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0L9 4.5L0 9Z" fill="#1687e8"/></marker>
+ <style>
+ text{font-family:"Segoe UI",Arial,sans-serif}.h{fill:#123365;font-weight:700}.body{fill:#486181}.st{fill:#15376c;font-size:22px;font-weight:700}.desc{fill:#486181;font-size:16px}.mono{font-family:Consolas,"Courier New",monospace;font-size:13px;fill:#283b54}.panel{fill:#fff;stroke:#9bcfff;stroke-width:1.5}.soft{fill:#edf6ff}.arrow{fill:none;stroke:#1687e8;stroke-width:3;marker-end:url(#arrow)}
+ </style>
+</defs>
+<rect width="1600" height="1180" fill="url(#bg)"/>
+<text x="45" y="54" class="h" font-size="36">Power BI Usage Metrics — Daily Incremental Capture</text>
+<text x="47" y="87" class="body" font-size="21">Capture yesterday’s usage every day; create only missing page/date records.</text>
+<rect x="1175" y="99" width="380" height="87" rx="12" fill="#eaf4ff" stroke="#9bcfff"/>
+<g fill="#1687e8" transform="translate(1194 119)"><rect y="25" width="10" height="20" rx="2"/><rect x="14" y="13" width="10" height="32" rx="2"/><rect x="28" width="10" height="45" rx="2"/></g>
+<text x="1247" y="122" class="h" font-size="16">Purpose</text>
+<text x="1247" y="143" class="body" font-size="14"><tspan x="1247">Preserve daily usage history in</tspan><tspan x="1247" dy="18">SharePoint while skipping existing</tspan><tspan x="1247" dy="18">page/date records.</tspan></text>
+<!-- 1 recurrence -->
+<rect x="45" y="202" width="1510" height="106" rx="14" class="panel"/>
+<circle cx="47" cy="244" r="25" fill="url(#blue)"/><text x="47" y="253" fill="#fff" font-size="25" font-weight="700" text-anchor="middle">1</text>
+<rect x="96" y="218" width="76" height="74" rx="12" fill="url(#blue)"/>
+<g transform="translate(112 231)" fill="none" stroke="#fff" stroke-width="3.3" stroke-linecap="round"><circle cx="22" cy="23" r="17"/><path d="M22 12V23L31 28M12 2Q22 -4 32 2"/></g>
+<text x="193" y="240" class="st">Recurrence</text><text x="193" y="266" class="desc"><tspan x="193">Scheduled daily trigger.</tspan><tspan x="193" dy="21">Runs incremental capture automatically.</tspan></text>
+<rect x="600" y="216" width="930" height="77" rx="11" class="soft"/>
+<text x="630" y="240" class="body" font-size="16">Frequency</text><text x="630" y="266" class="h" font-size="19">Day</text>
+<path d="M800 230V280" stroke="#cbdff0" stroke-width="1.5"/>
+<text x="830" y="240" class="body" font-size="16">Interval</text><text x="830" y="266" class="h" font-size="19">1</text>
+<path d="M990 230V280" stroke="#cbdff0" stroke-width="1.5"/>
+<text x="1020" y="240" class="body" font-size="16">Time zone</text><text x="1020" y="266" class="h" font-size="19">UTC</text>
+<path d="M1185 230V280" stroke="#cbdff0" stroke-width="1.5"/>
+<text x="1215" y="240" class="body" font-size="16">Schedule</text><text x="1215" y="266" class="h" font-size="19">11:00 daily · minute 0</text>
+<path d="M350 309V328" class="arrow"/>
+<!-- 2 query -->
+<rect x="45" y="335" width="1510" height="308" rx="14" class="panel"/>
+<circle cx="47" cy="377" r="25" fill="url(#teal)"/><text x="47" y="386" fill="#fff" font-size="25" font-weight="700" text-anchor="middle">2</text>
+<rect x="96" y="352" width="76" height="75" rx="12" fill="#fff3d5" stroke="#ffebbc"/>
+<g transform="translate(114 368)" fill="#eab000"><rect y="25" width="13" height="26" rx="2"/><rect x="14" y="12" width="13" height="39" rx="2"/><rect x="28" width="13" height="51" rx="2"/></g>
+<text x="193" y="374" class="st">Run a query against a dataset</text>
+<text x="193" y="402" class="desc"><tspan x="193">Query the Usage Metrics</tspan><tspan x="193" dy="21">semantic model for yesterday.</tspan><tspan x="193" dy="26">Returns page-level users, views</tspan><tspan x="193" dy="21">and page-view share.</tspan></text>
+<text x="515" y="358" class="h" font-size="17">DAX query — core logic</text>
+<rect x="510" y="367" width="595" height="260" rx="7" fill="#fff" stroke="#cbd9e8"/>
+<g class="mono">
+<text x="526" y="387" fill="#0068ed">EVALUATE</text>
+<text x="526" y="402" fill="#0068ed">VAR UsageDate = TODAY() - 1</text>
+<text x="526" y="417" fill="#0068ed">RETURN</text>
+<text x="526" y="432" fill="#0068ed">SELECTCOLUMNS(</text>
+<text x="542" y="447">FILTER(</text>
+<text x="558" y="462">SUMMARIZECOLUMNS(</text>
+<text x="574" y="477">'Dates'[Date],</text>
+<text x="574" y="492">'Report pages'[SectionName],</text>
+<text x="574" y="507">"TotalPageUsers", [Total page users],</text>
+<text x="574" y="522">"TotalPageViews", [Total page views],</text>
+<text x="574" y="537">"PageViewShare", [Page view share]</text>
+<text x="558" y="552">),</text>
+<text x="558" y="567">'Dates'[Date] = UsageDate</text>
+<text x="542" y="582">),</text>
+<text x="542" y="597">"Date", 'Dates'[Date],</text>
+<text x="542" y="612">"PageName", 'Report pages'[SectionName],</text>
+<text x="542" y="627">"TotalPageUsers", [TotalPageUsers], …</text>
+</g>
+<rect x="1120" y="367" width="410" height="108" rx="12" fill="#eaf4ff" stroke="#bddbff"/>
+<text x="1140" y="393" class="h" font-size="18">Yesterday’s data</text>
+<text x="1140" y="418" class="desc"><tspan x="1140">UsageDate = TODAY() - 1</tspan><tspan x="1140" dy="22">The date filter selects rows for</tspan><tspan x="1140" dy="20">that one model date.</tspan></text>
+<rect x="1120" y="487" width="410" height="126" rx="12" fill="#fff4dc" stroke="#ffd16a"/>
+<text x="1140" y="516" fill="#a84708" font-size="17" font-weight="700">Important: validate dates</text>
+<text x="1140" y="543" fill="#9b4b13" font-size="15"><tspan x="1140">TODAY() uses the semantic model’s</tspan><tspan x="1140" dy="20">evaluation context. Check date boundaries</tspan><tspan x="1140" dy="20">against UTC schedule and refresh timing.</tspan></text>
+<path d="M350 644V663" class="arrow"/>
+<!-- 3 loop -->
+<rect x="45" y="670" width="1510" height="86" rx="14" class="panel"/>
+<circle cx="47" cy="712" r="25" fill="url(#blue)"/><text x="47" y="721" fill="#fff" font-size="25" font-weight="700" text-anchor="middle">3</text>
+<rect x="96" y="684" width="76" height="59" rx="11" fill="url(#purple)"/>
+<g transform="translate(116 696)" fill="none" stroke="#fff" stroke-width="3"><rect y="2" width="36" height="33" rx="6"/><path d="M18 -4V10M18 27V41M-6 18H8M28 18H42"/></g>
+<text x="193" y="705" class="st">Apply to each</text><text x="193" y="731" class="desc">Process every returned table row.</text>
+<rect x="600" y="684" width="930" height="57" rx="10" class="soft"/>
+<text x="670" y="706" class="h" font-size="17">Input: First table rows</text><text x="670" y="729" class="body" font-size="15">Each row contains the page name, date and metrics for SharePoint processing.</text>
+<path d="M350 757V775" class="arrow"/>
+<!-- 4 get items -->
+<rect x="45" y="782" width="1510" height="107" rx="14" class="panel"/>
+<circle cx="47" cy="824" r="25" fill="url(#teal)"/><text x="47" y="833" fill="#fff" font-size="25" font-weight="700" text-anchor="middle">4</text>
+<rect x="96" y="797" width="76" height="76" rx="12" fill="#b9f1e7"/>
+<g transform="translate(108 813)"><circle cx="42" cy="20" r="19" fill="#008d86"/><circle cx="27" cy="29" r="18" fill="#0c9f92"/><rect width="35" height="42" rx="4" fill="#078c83"/><text x="17" y="29" fill="#fff" font-size="24" font-weight="700" text-anchor="middle">S</text></g>
+<text x="193" y="815" class="st">Get items — SharePoint</text><text x="193" y="841" class="desc"><tspan x="193">Look for an existing item</tspan><tspan x="193" dy="21">with the same page and date.</tspan></text>
+<rect x="600" y="797" width="930" height="76" rx="10" class="soft"/>
+<text x="620" y="820" class="h" font-size="17">Filter Query (dynamic values from current query row)</text>
+<rect x="620" y="830" width="545" height="31" rx="4" fill="#fff" stroke="#d0dfed"/>
+<text x="632" y="851" class="mono">PageName eq [PageName] and UsageDate eq [Date]</text>
+<rect x="1190" y="810" width="310" height="48" rx="8" fill="#fff" stroke="#cbdff0"/>
+<text x="1207" y="830" class="body" font-size="14">Top Count</text><text x="1207" y="850" class="h" font-size="18">1 item</text>
+<path d="M350 890V909" class="arrow"/>
+<!-- 5 condition -->
+<rect x="45" y="916" width="1510" height="166" rx="14" class="panel"/>
+<circle cx="47" cy="957" r="25" fill="url(#blue)"/><text x="47" y="966" fill="#fff" font-size="25" font-weight="700" text-anchor="middle">5</text>
+<rect x="96" y="932" width="76" height="64" rx="12" fill="#edf3fa"/>
+<g transform="translate(114 947)" fill="none" stroke="#405a7b" stroke-width="3"><path d="M20 0V12L2 29H38L20 46M2 29L20 46L38 29"/></g>
+<text x="193" y="952" class="st">Condition</text><text x="193" y="978" class="desc"><tspan x="193">Check whether Get items</tspan><tspan x="193" dy="21">returned zero matching records.</tspan></text>
+<rect x="600" y="931" width="930" height="45" rx="9" fill="#edf6ff" stroke="#c7dfff"/>
+<text x="620" y="949" class="h" font-size="14">Condition expression</text><text x="620" y="967" class="mono">length(body('Get_items')?['value']) is equal to 0</text>
+<rect x="600" y="987" width="440" height="76" rx="10" fill="#f0f9ed" stroke="#b8e0aa"/><rect x="600" y="987" width="440" height="25" rx="8" fill="#438b18"/>
+<text x="620" y="1005" fill="#fff" font-size="15" font-weight="700">TRUE — no existing record</text><text x="620" y="1030" fill="#245b24" font-size="16" font-weight="700">Create item in SharePoint</text><text x="620" y="1051" fill="#3e6e40" font-size="14">Insert the current page/date metrics.</text>
+<rect x="1060" y="987" width="470" height="76" rx="10" fill="#fff1f1" stroke="#f1b5b9"/><rect x="1060" y="987" width="470" height="25" rx="8" fill="#b52b38"/>
+<text x="1080" y="1005" fill="#fff" font-size="15" font-weight="700">FALSE — record already exists</text><text x="1080" y="1030" fill="#942632" font-size="16" font-weight="700">Do nothing</text><text x="1080" y="1051" fill="#9e4a52" font-size="14">Skip creation for this row.</text>
+<!-- checklist -->
+<rect x="45" y="1093" width="1510" height="85" rx="12" fill="#fff" stroke="#9bcfff"/>
+<rect x="45" y="1093" width="190" height="85" rx="11" fill="url(#blue)"/>
+<text x="65" y="1128" fill="#fff" font-size="18" font-weight="700">Daily checklist</text><text x="65" y="1151" fill="#fff" font-size="14">Monitor each run</text>
+<g font-size="15" fill="#304a6b">
+<circle cx="270" cy="1120" r="14" fill="#d7eaff"/><text x="270" y="1125" text-anchor="middle" class="h">1</text><text x="291" y="1125">Run at 11:00 UTC</text>
+<circle cx="475" cy="1120" r="14" fill="#d7eaff"/><text x="475" y="1125" text-anchor="middle" class="h">2</text><text x="496" y="1125">Query yesterday</text>
+<circle cx="674" cy="1120" r="14" fill="#d7eaff"/><text x="674" y="1125" text-anchor="middle" class="h">3</text><text x="695" y="1125">Check SharePoint</text>
+<circle cx="874" cy="1120" r="14" fill="#d7eaff"/><text x="874" y="1125" text-anchor="middle" class="h">4</text><text x="895" y="1125">Create missing rows</text>
+<circle cx="1090" cy="1120" r="14" fill="#d7eaff"/><text x="1090" y="1125" text-anchor="middle" class="h">5</text><text x="1111" y="1125">Validate run history</text>
+</g>
+<text x="260" y="1157" fill="#506987" font-size="14">Duplicate check key: page name + usage date. Verify SharePoint date formatting and OData filter behavior.</text>
+<text x="260" y="1175" fill="#506987" font-size="13">Tenant URLs, list identifiers and connected account details are intentionally omitted.</text>
+</svg>
